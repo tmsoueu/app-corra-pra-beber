@@ -17,5 +17,6 @@ Thumbs.db # Windows
 # IDE files
 .vscode/ # VS Code
 .idea/   # PyCharm
-storage/
+storage/data/.env
+*.env
 .cursor
