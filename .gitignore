@@ -1,0 +1,19 @@
+# Virtual environment
+.venv/
+__pypackages__/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pytest_cache/
+
+# Flet specific
+.flet/
+
+# OS generated files
+.DS_Store # macOS
+Thumbs.db # Windows
+
+# IDE files
+.vscode/ # VS Code
+.idea/   # PyCharm
