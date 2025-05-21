@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Seguir boas práticas do python.
+Usar pep8.
+
+adicionar comentários importantes no código.
