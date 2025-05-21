@@ -1,5 +1,6 @@
 import flet as ft
 from views.home_view import HomeView
+from views.login_view import LoginView
 import asyncio
 import platform
 
@@ -46,10 +47,10 @@ async def main(page: ft.Page):
         )
         page.update()
 
-    # Exibe a splash screen e aguarda 2 segundos antes de ir para a tela principal
+    # Exibe a splash screen e aguarda 2 segundos antes de ir para a tela de login
     mostrar_splash()
     await asyncio.sleep(2)
-    page.go("/")
+    page.go("/login")
 
     # Função de navegação entre as rotas/views do app
     def route_change(route):
@@ -91,6 +92,9 @@ async def main(page: ft.Page):
                     ]
                 )
             )
+        elif page.route == "/login":
+             # View de login
+             page.views.append(LoginView(page))
         page.update()
 
     # Define a função de navegação para mudanças de rota

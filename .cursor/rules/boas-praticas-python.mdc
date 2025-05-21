@@ -4,6 +4,7 @@ globs:
 alwaysApply: false
 ---
 Seguir boas práticas do python.
+Modular o código sempre que possível.
 Usar pep8.
 
 adicionar comentários importantes no código.
