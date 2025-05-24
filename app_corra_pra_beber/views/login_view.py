@@ -5,8 +5,6 @@ Esta view exibe a tela inicial com logo, título e botão de login com Google.
 
 import flet as ft
 import webbrowser
-import os
-import subprocess
 from utils.auth_google import auth_manager
 
 # Constantes de cores
@@ -125,64 +123,33 @@ class LoginView(ft.View):
         Args:
             e: Evento do clique no botão
         """
-        try:
-            # Inicia o fluxo de autenticação
-            auth_url = auth_manager.iniciar_login()
-            print(f'URL de autenticação gerada: {auth_url}')
-            
-            # Tenta abrir o navegador de diferentes formas
-            try:
-                # Primeiro tenta usar o webbrowser padrão
-                webbrowser.open(auth_url)
-            except Exception as e1:
-                print(f'Erro ao abrir navegador com webbrowser: {e1}')
-                try:
-                    # Se falhar, tenta abrir com o comando start (Windows)
-                    if os.name == 'nt':
-                        os.startfile(auth_url)
-                    else:
-                        # Para Linux/Mac
-                        subprocess.call(['xdg-open', auth_url])
-                except Exception as e2:
-                    print(f'Erro ao abrir navegador com os.startfile/subprocess: {e2}')
-                    # Se tudo falhar, mostra a URL para o usuário copiar
-                    self.page.snack_bar = ft.SnackBar(
-                        content=ft.Text('Não foi possível abrir o navegador automaticamente. Por favor, copie e cole esta URL no seu navegador:'),
-                        bgcolor=ft.colors.ORANGE
-                    )
-                    self.page.snack_bar.open = True
-                    self.page.update()
-            
-            # Exibe diálogo para colar a URL de redirecionamento
-            self.page.dialog = ft.AlertDialog(
-                title=ft.Text('Autenticação Google'),
-                content=ft.Text('Após fazer login, cole a URL para a qual você foi redirecionado:'),
-                actions=[
-                    ft.TextField(
-                        label='URL de Redirecionamento',
-                        multiline=True,
-                        min_lines=1,
-                        max_lines=3,
-                        on_submit=self.processar_login
-                    ),
-                    ft.ElevatedButton(
-                        'Confirmar',
-                        on_click=self.processar_login
-                    )
-                ],
-                actions_alignment=ft.MainAxisAlignment.END
-            )
-            self.page.dialog.open = True
-            self.page.update()
-            
-        except Exception as e:
-            print(f'Erro ao iniciar login: {e}')
-            self.page.snack_bar = ft.SnackBar(
-                content=ft.Text('Erro ao iniciar o processo de login. Tente novamente.'),
-                bgcolor=ft.colors.RED
-            )
-            self.page.snack_bar.open = True
-            self.page.update()
+        # Inicia o fluxo de autenticação
+        auth_url = auth_manager.iniciar_login()
+        
+        # Abre o navegador para autenticação
+        webbrowser.open(auth_url)
+        
+        # Exibe diálogo para colar a URL de redirecionamento
+        self.page.dialog = ft.AlertDialog(
+            title=ft.Text('Autenticação Google'),
+            content=ft.Text('Após fazer login, cole a URL para a qual você foi redirecionado:'),
+            actions=[
+                ft.TextField(
+                    label='URL de Redirecionamento',
+                    multiline=True,
+                    min_lines=1,
+                    max_lines=3,
+                    on_submit=self.processar_login
+                ),
+                ft.ElevatedButton(
+                    'Confirmar',
+                    on_click=self.processar_login
+                )
+            ],
+            actions_alignment=ft.MainAxisAlignment.END
+        )
+        self.page.dialog.open = True
+        self.page.update()
     
     def processar_login(self, e):
         """
