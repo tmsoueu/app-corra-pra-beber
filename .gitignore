@@ -9,8 +9,8 @@ __pycache__/
 
 # Flet specific
 .flet/
+
 # Cursor
-.cursor/
 
 # OS generated files
 .DS_Store # macOS
@@ -21,4 +21,4 @@ Thumbs.db # Windows
 .idea/   # PyCharm
 app_corra_pra_beber/storage/data/.env
 *.env
-.cursor
+.cursor/
