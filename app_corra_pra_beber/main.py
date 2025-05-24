@@ -11,6 +11,7 @@ from typing import Callable
 import flet as ft
 from views.home_view import HomeView
 from views.login_view import LoginView
+from views.counter_view import CounterView
 
 # Constantes da aplicação
 LARGURA_MOBILE = 390
@@ -66,39 +67,8 @@ def route_change(page: ft.Page, route: str) -> None:
         # View principal (Home)
         page.views.append(HomeView(page))
     elif page.route == '/counter':
-        # View do contador, responsiva e centralizada
-        page.views.append(
-            ft.View(
-                route='/counter',
-                controls=[
-                    ft.AppBar(title=ft.Text('Tela do Contador')),
-                    ft.Container(
-                        content=ft.ResponsiveRow([
-                            ft.Column(
-                                controls=[
-                                    ft.Text(
-                                        'Esta é a tela do contador!',
-                                        size=24,
-                                        weight=ft.FontWeight.BOLD,
-                                        text_align=ft.TextAlign.CENTER
-                                    ),
-                                    ft.ElevatedButton(
-                                        'Voltar para Home',
-                                        on_click=lambda e: page.go('/'),
-                                        expand=True
-                                    )
-                                ],
-                                col={'xs': 12, 'sm': 10, 'md': 8, 'lg': 6},
-                                alignment=ft.MainAxisAlignment.CENTER
-                            )
-                        ]),
-                        padding=20,
-                        alignment=ft.alignment.center,
-                        expand=True
-                    )
-                ]
-            )
-        )
+        # View do contador
+        page.views.append(CounterView(page))
     elif page.route == '/login':
         # View de login
         page.views.append(LoginView(page))
