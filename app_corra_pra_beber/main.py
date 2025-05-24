@@ -102,4 +102,4 @@ async def main(page: ft.Page):
 
 # Ponto de entrada da aplicação Flet
 if __name__ == "__main__":
-    ft.app(target=main, view=ft.AppView.FLET_APP)
+    ft.app(target=main)
