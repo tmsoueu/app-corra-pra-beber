@@ -1,87 +1,214 @@
-import flet as ft
+"""
+Módulo que implementa a view de login da aplicação.
+Esta view exibe a tela inicial com logo, título e botão de login com Google.
+"""
 
-# Cores base da paleta (adaptadas para tema escuro)
-LARANJA_VIBRANTE = ft.Colors.ORANGE_ACCENT_400  # Ajuste para melhor visibilidade em fundo escuro
-DOURADO_AMBAR = ft.Colors.AMBER_ACCENT_400     # Ajuste para melhor visibilidade em fundo escuro
+import flet as ft
+import webbrowser
+import os
+import subprocess
+from utils.auth_google import auth_manager
+
+# Constantes de cores
+LARANJA_VIBRANTE = ft.Colors.ORANGE_ACCENT_400
+DOURADO_AMBAR = ft.Colors.AMBER_ACCENT_400
 BRANCO_CREME = ft.Colors.WHITE
 CINZA_CLARO = ft.Colors.BLUE_GREY_50
-# CINZA_ESCURO_FUNDO = ft.Colors.BLUE_GREY_900 # Removido o fundo escuro da View principal
-# CINZA_ESCURO_CARD = ft.Colors.BLUE_GREY_800 # Removido o fundo escuro do card
-# Cor laranja original fornecida pelo usuário, não mais usada para fundo de card:
-# LARANJA_FUNDO_CARD = "#eb7b13"
+
+# Constantes de fonte
+FONTE_TITULO = 'Roboto Condensed'
+
+# Constantes de dimensões
+LARGURA_LOGO = 150
+ALTURA_LOGO = 150
+LARGURA_MAXIMA_BOTAO = 300
+TAMANHO_TITULO = 40
+TAMANHO_SUBTITULO = 18
+TAMANHO_TEXTO_BOTAO = 16
 
 class LoginView(ft.View):
+    """
+    View de login responsiva e centralizada.
+    
+    Args:
+        page: Instância da página Flet
+    """
+    
     def __init__(self, page: ft.Page):
+        self.page = page
+        
+        # Carrega a fonte do Google Fonts
+        page.fonts = {
+            FONTE_TITULO: 'https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap'
+        }
+        
         super().__init__(
-            route="/login",  # Define a rota para esta view
+            route='/login',
             vertical_alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            # bgcolor=CINZA_ESCURO_FUNDO, # Removido o fundo escuro da View
-            # O fundo da View agora será o tema padrão (escuro ou claro)
             controls=[
-                # Coluna principal centralizada vertical e horizontalmente
                 ft.Column(
                     controls=[
-                        # Logo (imagem) - Centralizado automaticamente pela coluna principal
+                        # Logo
                         ft.Image(
-                            src="assets/logo.png",
-                            width=150,
-                            height=150,
+                            src='assets/logo.png',
+                            width=LARGURA_LOGO,
+                            height=ALTURA_LOGO,
                             fit=ft.ImageFit.CONTAIN,
-                            # Adicionar um leve brilho ou ajuste para visibilidade em fundo escuro, se necessário
                         ),
-                        # Container para textos e botão, com largura máxima para mobile
+                        # Container para textos e botão
                         ft.Container(
                             content=ft.Column(
                                 controls=[
                                     # Título principal
                                     ft.Text(
-                                        "Corra pra Beber",
-                                        size=40,
+                                        'Corra pra Beber',
+                                        size=TAMANHO_TITULO,
                                         weight=ft.FontWeight.BOLD,
-                                        color=LARANJA_VIBRANTE,  # Usando a cor ajustada para fundo escuro
-                                        text_align=ft.TextAlign.CENTER
+                                        color=LARANJA_VIBRANTE,
+                                        text_align=ft.TextAlign.CENTER,
+                                        font_family=FONTE_TITULO
                                     ),
                                     # Subtítulo
                                     ft.Text(
-                                        "Pronto pra correr e beber?",
-                                        size=18,
-                                        color=LARANJA_VIBRANTE,  # Usando a cor ajustada para fundo escuro
+                                        'Pronto pra correr e beber?',
+                                        size=TAMANHO_SUBTITULO,
+                                        color=LARANJA_VIBRANTE,
                                         text_align=ft.TextAlign.CENTER
                                     ),
                                     # Botão Continuar com Google
                                     ft.Container(
                                         content=ft.ElevatedButton(
                                             content=ft.Row(
-                                                [ft.Image(src='https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg', width=24, height=24),
-                                                 ft.Text("Continuar com Google", size=16)
+                                                [
+                                                    ft.Image(
+                                                        src='https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg',
+                                                        width=24,
+                                                        height=24
+                                                    ),
+                                                    ft.Text(
+                                                        'Continuar com Google',
+                                                        size=TAMANHO_TEXTO_BOTAO
+                                                    )
                                                 ],
                                                 height=50,
                                                 alignment=ft.MainAxisAlignment.CENTER,
                                             ),
-                                            on_click=lambda e: print("Botão Google Clicado!"),  # Placeholder para a lógica de login
-                                            bgcolor=BRANCO_CREME,  # Mantido branco padrão para o botão Google
-                                            color=ft.Colors.BLACK87,  # Cor do texto no botão branco
-                                            # style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=5)),
+                                            on_click=self.login_google,
+                                            bgcolor=BRANCO_CREME,
+                                            color=ft.Colors.BLACK87,
                                             elevation=2,
-                                            expand=True # O botão se expande dentro do Container menor
+                                            expand=True
                                         ),
                                         margin=ft.margin.only(top=30),
-                                        width=300, # Limita a largura máxima do container interno (e do botão)
-                                        padding=ft.padding.symmetric(vertical=20) # Aumenta a altura visual do botão adicionando padding ao Container pai (ajustado para 20)
+                                        width=LARGURA_MAXIMA_BOTAO,
+                                        padding=ft.padding.symmetric(vertical=20)
                                     )
                                 ],
                                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                                 spacing=1,
                             ),
-                            padding=ft.padding.all(20), # Padding interno para os elementos
-                            alignment=ft.alignment.center, # Centraliza o conteúdo dentro deste container
-                            # Sem largura fixa aqui para o Container externo (agora removido)
-                            # O Container interno abaixo controla a largura dos textos/botão
+                            padding=ft.padding.all(20),
+                            alignment=ft.alignment.center,
                         )
                     ],
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER, # Centraliza a coluna principal
-                    spacing=25, # Espaçamento entre o logo e o container de textos/botão
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=25,
                 )
             ]
-        ) 
+        )
+    
+    def login_google(self, e):
+        """
+        Inicia o processo de login com Google.
+        
+        Args:
+            e: Evento do clique no botão
+        """
+        try:
+            # Inicia o fluxo de autenticação
+            auth_url = auth_manager.iniciar_login()
+            print(f'URL de autenticação gerada: {auth_url}')
+            
+            # Tenta abrir o navegador de diferentes formas
+            try:
+                # Primeiro tenta usar o webbrowser padrão
+                webbrowser.open(auth_url)
+            except Exception as e1:
+                print(f'Erro ao abrir navegador com webbrowser: {e1}')
+                try:
+                    # Se falhar, tenta abrir com o comando start (Windows)
+                    if os.name == 'nt':
+                        os.startfile(auth_url)
+                    else:
+                        # Para Linux/Mac
+                        subprocess.call(['xdg-open', auth_url])
+                except Exception as e2:
+                    print(f'Erro ao abrir navegador com os.startfile/subprocess: {e2}')
+                    # Se tudo falhar, mostra a URL para o usuário copiar
+                    self.page.snack_bar = ft.SnackBar(
+                        content=ft.Text('Não foi possível abrir o navegador automaticamente. Por favor, copie e cole esta URL no seu navegador:'),
+                        bgcolor=ft.colors.ORANGE
+                    )
+                    self.page.snack_bar.open = True
+                    self.page.update()
+            
+            # Exibe diálogo para colar a URL de redirecionamento
+            self.page.dialog = ft.AlertDialog(
+                title=ft.Text('Autenticação Google'),
+                content=ft.Text('Após fazer login, cole a URL para a qual você foi redirecionado:'),
+                actions=[
+                    ft.TextField(
+                        label='URL de Redirecionamento',
+                        multiline=True,
+                        min_lines=1,
+                        max_lines=3,
+                        on_submit=self.processar_login
+                    ),
+                    ft.ElevatedButton(
+                        'Confirmar',
+                        on_click=self.processar_login
+                    )
+                ],
+                actions_alignment=ft.MainAxisAlignment.END
+            )
+            self.page.dialog.open = True
+            self.page.update()
+            
+        except Exception as e:
+            print(f'Erro ao iniciar login: {e}')
+            self.page.snack_bar = ft.SnackBar(
+                content=ft.Text('Erro ao iniciar o processo de login. Tente novamente.'),
+                bgcolor=ft.colors.RED
+            )
+            self.page.snack_bar.open = True
+            self.page.update()
+    
+    def processar_login(self, e):
+        """
+        Processa a URL de redirecionamento após autenticação.
+        
+        Args:
+            e: Evento do botão ou campo de texto
+        """
+        # Obtém a URL do campo de texto
+        url = e.control.value if isinstance(e.control, ft.TextField) else e.control.parent.controls[0].value
+        
+        # Processa o redirecionamento
+        user_data = auth_manager.processar_redirecionamento(url)
+        
+        # Fecha o diálogo
+        self.page.dialog.open = False
+        
+        if user_data:
+            # Redireciona para a página principal
+            self.page.go('/')
+        else:
+            # Exibe mensagem de erro
+            self.page.snack_bar = ft.SnackBar(
+                content=ft.Text('Erro ao fazer login. Tente novamente.'),
+                bgcolor=ft.colors.RED
+            )
+            self.page.snack_bar.open = True
+        
+        self.page.update() 
