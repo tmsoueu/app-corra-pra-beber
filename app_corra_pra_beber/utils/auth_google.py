@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 # Carrega variáveis do .env localizado em storage/data/.env
-ENV_PATH = Path(__file__).parent.parent.parent / 'storage' / 'data' / '.env'
+ENV_PATH = Path(__file__).parent.parent / 'storage' / 'data' / '.env'
 load_dotenv(dotenv_path=ENV_PATH)
 
 CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')

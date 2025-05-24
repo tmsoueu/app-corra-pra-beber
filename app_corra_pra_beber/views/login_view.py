@@ -46,7 +46,7 @@ class LoginView(ft.View):
                                     ft.Text(
                                         "Pronto pra correr e beber?",
                                         size=18,
-                                        color=DOURADO_AMBAR,  # Usando a cor ajustada para fundo escuro
+                                        color=LARANJA_VIBRANTE,  # Usando a cor ajustada para fundo escuro
                                         text_align=ft.TextAlign.CENTER
                                     ),
                                     # Botão Continuar com Google
@@ -56,6 +56,7 @@ class LoginView(ft.View):
                                                 [ft.Image(src='https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg', width=24, height=24),
                                                  ft.Text("Continuar com Google", size=16)
                                                 ],
+                                                height=50,
                                                 alignment=ft.MainAxisAlignment.CENTER,
                                             ),
                                             on_click=lambda e: print("Botão Google Clicado!"),  # Placeholder para a lógica de login
@@ -65,12 +66,13 @@ class LoginView(ft.View):
                                             elevation=2,
                                             expand=True # O botão se expande dentro do Container menor
                                         ),
-                                        margin=ft.margin.only(top=20),
-                                        width=300 # Limita a largura máxima do container interno (e do botão)
+                                        margin=ft.margin.only(top=30),
+                                        width=300, # Limita a largura máxima do container interno (e do botão)
+                                        padding=ft.padding.symmetric(vertical=20) # Aumenta a altura visual do botão adicionando padding ao Container pai (ajustado para 20)
                                     )
                                 ],
                                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                                spacing=15,
+                                spacing=1,
                             ),
                             padding=ft.padding.all(20), # Padding interno para os elementos
                             alignment=ft.alignment.center, # Centraliza o conteúdo dentro deste container
