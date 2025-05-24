@@ -11,4 +11,4 @@ def main(page: ft.Page):
     page.on_mount = ao_montar
     page.add(ft.Text("Teste de redimensionamento"))
 
-ft.app(target=main)
+ft.app(target=main, view=ft.AppView.FLET_APP, port=4444)
